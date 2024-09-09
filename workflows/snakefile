@@ -1,0 +1,123 @@
+from snakebids import bids, generate_inputs
+configfile: 'config.yml'
+
+# organise inputs
+inputs = generate_inputs(
+    bids_dir=config['fmriprep_dir'],
+    pybids_inputs=config['pybids_inputs'],
+    use_bids_inputs=True)
+
+# # for testing only
+# inputs.subjects = sorted(inputs.subjects)[0:1]
+# inputs.zip_lists['bold']['subject'] = sorted(inputs.subjects)
+# print(inputs.subjects)
+
+# organise outputs
+outputs = expand(
+            expand(
+                bids(
+                    root=config['out_data']+'derivatives/'+'{label}'+'/fmriprep_downsampled_denoised_fc/',
+                    atlas='{atlas}',
+                    space=config['pybids_inputs']['bold']['filters']['space'],
+                    denoise='{denoise}',
+                    fc_method='{fc_method}',
+                    suffix='fc.csv',
+                    task='rest',
+                    **inputs.wildcards['bold']
+                    ),
+                zip,
+                allow_missing=True,
+                **inputs['bold'].zip_lists
+            ),
+            label=config['data_label'],
+            atlas=config['atlas'],
+            denoise=config['denoise'],
+            fc_method=config['fc_method']
+        )
+
+
+rule all:
+    input: outputs
+
+
+def get_parcellation(wildcards):
+
+    if (wildcards.atlas == 'Schaefer419' 
+        and config['pybids_inputs']['bold']['filters']['space'] == 'fsLR'):
+        # special case
+        parc = wildcards.atlas
+
+    if (wildcards.atlas == 'Schaefer419' 
+        and config['pybids_inputs']['bold']['filters']['space'] != 'fsLR'):
+        parc = '/home/lukeh/hpcworking/shared/parcellations/Schaefer419_metamatching/FC419_MNI2mm.nii.gz'
+
+    return parc
+
+
+rule parcellate:
+    input: 
+        inputs.path['bold']
+    params: 
+        parc = get_parcellation
+    output: 
+        bids(
+            root=config['out_data']+'derivatives/'+'{label}'+'/fmriprep_downsampled/',
+            atlas='{atlas}',
+            space='{space}',
+            suffix='bold.csv',
+            task='rest',
+            **inputs.wildcards['bold'],
+            )
+    shell:
+        'python ../src/parcellate.py --input {input} --parc {params.parc} --output {output}'
+
+
+rule denoise:
+    input:
+        (bids(
+            root=config['out_data']+'derivatives/'+'{label}'+'/fmriprep_downsampled/',
+            atlas='{atlas}',
+            space='{space}',
+            suffix='bold.csv',
+            task='rest',
+            **inputs.wildcards['bold']),
+        inputs.path['bold']
+        )
+    output:
+        bids(
+            root=config['out_data']+'derivatives/'+'{label}'+'/fmriprep_downsampled_denoised/',
+            atlas='{atlas}',
+            space='{space}',
+            denoise='{denoise}',
+            suffix='bold.csv',
+            task='rest',
+            **inputs.wildcards['bold'],
+            )
+    shell:
+        'python ../src/denoise.py --input {input[0]} --strategy {wildcards.denoise} --ref_img {input[1]} --output {output}'
+
+
+rule estimate_fc:
+    input:
+        bids(
+            root=config['out_data']+'derivatives/'+'{label}'+'/fmriprep_downsampled_denoised/',
+            atlas='{atlas}',
+            space='{space}',
+            denoise='{denoise}',
+            suffix='bold.csv',
+            task='rest',
+            **inputs.wildcards['bold'],
+            )
+    output:
+        bids(
+            root=config['out_data']+'derivatives/'+'{label}'+'/fmriprep_downsampled_denoised_fc/',
+            atlas='{atlas}',
+            space='{space}',
+            denoise='{denoise}',
+            fc_method='{fc_method}',
+            suffix='fc.csv',
+            task='rest',
+            **inputs.wildcards['bold'],
+            )
+    shell:
+        'python ../src/estimate_fc.py --input {input} --output {output} --method {wildcards.fc_method}'

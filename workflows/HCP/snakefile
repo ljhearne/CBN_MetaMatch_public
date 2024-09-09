@@ -1,0 +1,52 @@
+import numpy as np
+from scipy.signal import detrend
+
+configfile: 'config_hcp.yml'
+
+# organise subjects
+subjects = np.loadtxt(config['subject_txt'], dtype=str)
+
+rule all:
+    input:
+        expand(
+            config['out_data']+"fc/sub-{sub}/sub-{sub}_task-rest_run-all_dir-all_parc-"+config['parc_label']+"_method-correlation.csv", 
+            sub=subjects
+        )
+
+
+rule parcellate:
+    input: 
+        config['in_data']+"{sub}/MNINonLinear/Results/rfMRI_REST{run}_{direction}/rfMRI_REST{run}_{direction}_Atlas_MSMAll_hp2000_clean.dtseries.nii"
+    params: 
+        parc = config['parc_file']
+    output:
+        config['out_data']+"timeseries/sub-{sub}/sub-{sub}_task-rest_run-{run}_dir-{direction}_parc-"+config['parc_label']+".csv"
+    shell:
+        'python ../../src/parcellate.py --input {input} --parc {params.parc} --output {output}'
+
+
+rule combine_timeseries:
+    input: 
+        R1LR=config['out_data']+"timeseries/sub-{sub}/sub-{sub}_task-rest_run-1_dir-LR_parc-"+config['parc_label']+".csv",
+        R2LR=config['out_data']+"timeseries/sub-{sub}/sub-{sub}_task-rest_run-2_dir-LR_parc-"+config['parc_label']+".csv",
+        R1RL=config['out_data']+"timeseries/sub-{sub}/sub-{sub}_task-rest_run-1_dir-RL_parc-"+config['parc_label']+".csv",
+        R2RL=config['out_data']+"timeseries/sub-{sub}/sub-{sub}_task-rest_run-2_dir-RL_parc-"+config['parc_label']+".csv"
+    output:
+        config['out_data']+"timeseries/sub-{sub}/sub-{sub}_task-rest_run-all_dir-all_parc-"+config['parc_label']+".csv",
+    run:
+        data = np.hstack((detrend(np.loadtxt(input.R1LR, delimiter=',').T),
+                          detrend(np.loadtxt(input.R2LR, delimiter=',').T),
+                          detrend(np.loadtxt(input.R1RL, delimiter=',').T),
+                          detrend(np.loadtxt(input.R2RL, delimiter=',').T)))
+        np.savetxt(str(output), data.T, delimiter=',')
+
+
+rule estimate_fc:
+    input:
+        config['out_data']+"timeseries/sub-{sub}/sub-{sub}_task-rest_run-all_dir-all_parc-"+config['parc_label']+".csv"
+
+    output:
+        config['out_data']+"fc/sub-{sub}/sub-{sub}_task-rest_run-all_dir-all_parc-"+config['parc_label']+"_method-correlation.csv"
+
+    shell:
+        'python ../../src/estimate_fc.py --input {input} --output {output} --method correlation'

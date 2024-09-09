@@ -1,0 +1,96 @@
+{
+  "1": {
+    "study_label": "CBN_OCD",
+    "bids_dir": "/home/lukeh/LabData/Lab_LucaC/Luke/Archive/OCDbaseline/data/bids/",
+    "fmriprep_dir": "/home/lukeh/hpcworking/lukeH/projects/fMRIPrep_23_2_0/data/OCDbaseline/derivatives/fmriprep/",
+    "conn_dir": "/home/lukeh/hpcworking/lukeH/projects/CBN_MetaMatch/data/derivatives/CBN_OCD_Baseline/fmriprep_downsampled_denoised_fc/",
+    "phenotype_list": [
+      "ybocs_total",
+      "hama_total",
+      "madrs_total",
+      "fsiq-4_comp_score",
+      "age",
+      "gender",
+      "avg_framewise_displacement",
+      "handedness",
+      "years_of_education"
+    ],
+    "session": null,
+    "group": "patient",
+    "group_label": "patient",
+    "site": "Brisbane"
+  },
+  "2": {
+    "study_label": "MEL_OCD_ClinicalTrial",
+    "bids_dir": "/home/lukeh/hpcworking/shared/projects/Melbourne_OCD_dataset/data/bids/",
+    "fmriprep_dir": "/home/lukeh/hpcworking/lukeH/projects/fMRIPrep_23_2_0/data/OCDmelbourne/derivatives/fmriprep/",
+    "conn_dir": "/home/lukeh/hpcworking/lukeH/projects/CBN_MetaMatch/data/derivatives/MEL_OCD_ClinicalTrial/fmriprep_downsampled_denoised_fc/",
+    "phenotype_list": [
+      "P1_BSL_YBOCS_total",
+      "P1_BSL_HAMA_ Total",
+      "P1_BSL_MADRS_ Total",
+      "WASI_II_FSIQ4_Composite_Score",
+      "Age at Beginning of Phase 1",
+      "gender",
+      "avg_framewise_displacement",
+      "handedness"
+    ],
+    "session": "A",
+    "group": null,
+    "group_label": "patient",
+    "site": "Melbourne"
+  },
+  "3": {
+    "study_label": "SNUH_OCD",
+    "bids_dir": "/home/lukeh/hpcworking/lukeH/projects/SNUH_OCD/data/bids/",
+    "fmriprep_dir": "/home/lukeh/hpcworking/lukeH/projects/fMRIPrep_23_2_0/data/OCDkorea/derivatives/fmriprep/",
+    "conn_dir": "/home/lukeh/hpcworking/lukeH/projects/CBN_MetaMatch/data/derivatives/SNUH_OCD/fmriprep_downsampled_denoised_fc/",
+    "phenotype_list": [
+      "ybocs_total",
+      "HAMA",
+      "HAMD",
+      "IQ",
+      "age",
+      "gender",
+      "avg_framewise_displacement",
+      "handedness",
+      "education"
+    ],
+    "session": null,
+    "group": "patient",
+    "group_label": "patient",
+    "site": "Korea"
+  },
+  "4": {
+    "study_label": "CBN_HC",
+    "bids_dir": "/home/lukeh/LabData/Lab_LucaC/Luke/Archive/OCDbaseline/data/bids/",
+    "fmriprep_dir": "/home/lukeh/hpcworking/lukeH/projects/fMRIPrep_23_2_0/data/OCDbaseline/derivatives/fmriprep/",
+    "conn_dir": "/home/lukeh/hpcworking/lukeH/projects/CBN_MetaMatch/data/derivatives/CBN_OCD_Baseline/fmriprep_downsampled_denoised_fc/",
+    "phenotype_list": [
+      "ybocs_total",
+      "hama_total",
+      "madrs_total",
+      "fsiq-4_comp_score",
+      "age",
+      "gender",
+      "avg_framewise_displacement",
+      "handedness",
+      "years_of_education"
+    ],
+    "session": null,
+    "group": "control",
+    "group_label": "control",
+    "site": "Brisbane"
+  },
+  "5": {
+    "study_label": "SNUH_HC",
+    "bids_dir": "/home/lukeh/hpcworking/lukeH/projects/SNUH_OCD/data/bids/",
+    "fmriprep_dir": "/home/lukeh/hpcworking/lukeH/projects/SNUH_OCD/data/derivatives/fmriprep/",
+    "conn_dir": "/home/lukeh/hpcworking/lukeH/projects/CBN_MetaMatch/data/derivatives/SNUH_OCD/fmriprep_downsampled_denoised_fc/",
+    "phenotype_list": ["IQ", "age", "gender", "avg_framewise_displacement", "handedness", "education"],
+    "session": null,
+    "group": "control",
+    "group_label": "control",
+    "site": "Korea"
+  }
+}

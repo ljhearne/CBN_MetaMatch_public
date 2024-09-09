@@ -1,0 +1,15 @@
+pybids_inputs:
+  bold:
+    filters:
+      suffix: "bold"
+      extension: "dtseries.nii"
+      space: "fsLR"
+      datatype: "func"
+      task: "rest"
+    wildcards:
+      - subject
+      - session
+
+fmriprep_dir: "/home/lukeh/hpcworking/lukeH/projects/fMRIPrep_23_2_0/data/OCDmelbourne/derivatives/fmriprep/"
+bids_dir: "/home/lukeh/hpcworking/shared/projects/Melbourne_OCD_dataset/data/bids/"
+data_label: "MEL_OCD_ClinicalTrial"

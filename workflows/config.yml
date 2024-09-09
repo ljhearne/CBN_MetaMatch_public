@@ -1,0 +1,13 @@
+out_data: "/home/lukeh/hpcworking/lukeH/projects/CBN_MetaMatch/data/"
+
+atlas:
+  - "Schaefer419"
+
+denoise:
+  - "scrubbing.5"
+  - "scrubbing.5+gsr"
+  - "simple+gsr"
+  - "simple"
+  
+fc_method:
+  - "correlation"

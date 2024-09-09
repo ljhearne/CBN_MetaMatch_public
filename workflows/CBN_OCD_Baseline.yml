@@ -1,0 +1,14 @@
+pybids_inputs:
+  bold:
+    filters:
+      suffix: "bold"
+      extension: "dtseries.nii"
+      space: "fsLR"
+      datatype: "func"
+      task: "rest"
+    wildcards:
+      - subject
+
+fmriprep_dir: "/home/lukeh/hpcworking/lukeH/projects/fMRIPrep_23_2_0/data/OCDbaseline/derivatives/fmriprep/"
+bids_dir: "/home/lukeh/hpcworking/lukeH/projects/OCDbaseline/data/bids/"
+data_label: "CBN_OCD_Baseline"

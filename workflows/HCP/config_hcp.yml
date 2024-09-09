@@ -1,0 +1,18 @@
+subject_txt: "/home/lukeh/projects/CBN_MetaMatch/scripts/HCP/287_unrelated_participants.txt"
+in_data: "/home/lukeh/LabData/Lab_LucaC/HumanConnectomeProject/unzipped_rawdata/3T_rfMRI_REST_fix/"
+out_data: "/home/lukeh/LabData/Lab_LucaC/HumanConnectomeProject/derivatives/"
+# parc_file: "/home/lukeh/LabData/Lab_LucaC/Luke/Backups/hpc_backups/parcellations/Tian2020MSA_2023/3T/Cortex-Subcortex/Schaefer2018_400Parcels_7Networks_order_Tian_Subcortex_S4.dlabel.nii"
+# parc_label: "Schaefer2018_400Parcels_7Networks_order_Tian_Subcortex_S4"
+parc_file: "/home/lukeh/LabData/Lab_LucaC/Luke/Backups/hpc_backups/parcellations/Tian2020MSA_2023/3T/Cortex-Subcortex/Schaefer2018_200Parcels_7Networks_order_Tian_Subcortex_S2.dlabel.nii"
+parc_label: "Schaefer2018_200Parcels_7Networks_order_Tian_Subcortex_S2"
+# parc_file: "/home/lukeh/LabData/Lab_LucaC/Luke/Backups/hpc_backups/parcellations/Tian2020MSA_2023/3T/Cortex-Subcortex/Schaefer2018_100Parcels_7Networks_order_Tian_Subcortex_S1.dlabel.nii"
+# parc_label: "Schaefer2018_100Parcels_7Networks_order_Tian_Subcortex_S1"
+
+runs:
+ - "1"
+ - "2"
+
+directions:
+ - "LR"
+ - "RL"
+

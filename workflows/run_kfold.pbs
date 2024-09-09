@@ -1,0 +1,88 @@
+#!/bin/bash
+##########################################################################
+# Runs the metamatching model with the below parameters
+# Each job is an iteration of a kfold. This seems the best way to parallel
+# on the hpc.
+##########################################################################
+
+#PBS -N mm_kfold
+#PBS -m abe
+#PBS -M luke.hearne@qimrberghofer.edu.au
+#PBS -o ../trash/batch/
+#PBS -e ../trash/batch/
+#PBS -k eod
+
+## Parameters
+# These should be kept the same across all analyses
+K_IT=1
+DS_LIST="MEL_OCD_ClinicalTrial SNUH_OCD SNUH_HC CBN_OCD CBN_HC"
+
+# Add paths to code and cd
+export PATH="$PATH:/mnt/lustre/working/lab_lucac/lukeH/projects/CBN_MetaMatch/scripts/"
+cd /mnt/lustre/working/lab_lucac/lukeH/projects/CBN_MetaMatch/scripts/
+
+# Activate the python env
+module load miniconda3/current
+
+source activate /mnt/lustre/working/lab_lucac/lukeH/conda_envs/mm_intel
+
+if [ "$PERMUTE" = "True" ]; then
+    echo "Running permutation"
+    OUT_PATH="../results/kfold_july/${MODEL}_SHUFFLED/"
+     mapfile -t JOB_IDS < /mnt/backedup/home/lukeH/lukeH/projects/CBN_MetaMatch/workflows/${RESAMPLE}-${PHENOTYPE_LABELS}-${DENOISE}-${MODEL}_permute_job_ids.txt
+
+else
+    OUT_PATH="../results/kfold_july/${MODEL}/"
+    mapfile -t JOB_IDS < /mnt/backedup/home/lukeH/lukeH/projects/CBN_MetaMatch/workflows/${RESAMPLE}-${PHENOTYPE_LABELS}-${DENOISE}-${MODEL}_job_ids.txt
+
+fi
+printf "%s\n" "${JOB_IDS[1]}"
+echo $PBS_ARRAY_INDEX
+INDEX=${JOB_IDS[$PBS_ARRAY_INDEX]}
+
+# Arguments for python script:
+args=(
+    --ds_list $DS_LIST 
+    --model $MODEL
+    --denoise $DENOISE
+    --seed $INDEX
+    --phenotype_labels $PHENOTYPE_LABELS 
+    --confounds $CONFOUNDS
+    --k_iterations $K_IT 
+    --k_splits $K_SPLIT
+    --resample $RESAMPLE
+    --save_weights
+)
+
+if [ "$PERMUTE" = "True" ]; then
+    args+=(--y_shuffle)
+fi
+
+# 1. Run the basic model (and if it's the first iteration
+OUT=${OUT_PATH}"kfold_denoise-${DENOISE}_ksplit-${K_SPLIT}_"\
+"model-${MODEL}_batch-$INDEX"
+echo $OUT
+
+# Save inputs if it's the first job (they are the same for all jobs)
+if [ "$INDEX" -eq 0 ]; then
+    args+=(--save_inputs)
+    python ../scripts/run_model.py "${args[@]}" --output $OUT
+else
+    python ../scripts/run_model.py "${args[@]}" --output $OUT
+fi
+
+# 2. Run the model with site harmonisation:
+OUT=${OUT_PATH}"kfold_denoise-${DENOISE}_ksplit-${K_SPLIT}_"\
+"model-${MODEL}_site_batch-$INDEX"
+echo $OUT
+
+args+=(--perform_site)
+python ../scripts/run_model.py "${args[@]}" --output $OUT
+
+# 3. Run the model with site harmonisation and confound regression:
+OUT=${OUT_PATH}"kfold_denoise-${DENOISE}_ksplit-${K_SPLIT}_"\
+"model-${MODEL}_site_confounds_removed_batch-$INDEX"
+echo $OUT
+
+args+=(--y_regress)
+python ../scripts/run_model.py "${args[@]}" --output $OUT
